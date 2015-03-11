@@ -1,0 +1,24 @@
+package #package.value#
+
+import java.util.Map;
+
+public class #modelInterface# {
+
+#fields#
+
+    public #modelInterface#(){
+
+    }
+
+    public #modelInterface#(#paraFeilds#){
+#feildsInitValue#
+    }
+
+    public #modelInterface#(Map<String, Object> map){
+#mapInitValue#
+    }
+
+#setter#
+
+#getter#
+}

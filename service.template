@@ -1,0 +1,121 @@
+package #package.value#
+
+#import#
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+@Service("#-serviceInterface#")
+public class ResourceAttributeService{
+
+    private static final Logger logger = LoggerFactory.getLogger(#serviceInterface#.class);
+
+    @Autowired
+    private #daoInterface# #-daoInterface#;
+
+    public List<#model#> getAll() {
+        #logger.sql#
+        return #-daoInterface#.getAll();
+    }
+
+    public List<#model#> get(#model# model) {
+        #logger.sql#
+        if(model==null){
+            #logger.nullPara#
+            return null;
+        }
+        return #-daoInterface#.get(#para.columns#);
+    }
+
+    public #model# get(#id.Type# id) {
+        int[] ids = {id};
+        List<#model#> list = get(ids);
+        if(list.size() == 0){
+            #logger.nullResult#
+            return null;
+        }
+        return list.get(0);
+    }
+
+
+    public List<#model#> get(#id.Type#[] ids) {
+        if(ids==null){
+            #logger.nullPara#
+            return null;
+        }
+        return resourceAttributeDao.get(toIntegerArray(ids));
+    }
+
+
+    public int update(PamResourceAttribute domain) {
+        logger.debug(LoginInfo.getLoginUser() + Constants.EXE_METHOD);
+        if(domain==null){
+            logger.warn(Constants.PARA_NULL);
+            return 0;
+        }
+        return resourceAttributeDao.update(domain);
+    }
+
+
+    public int update(Collection<PamResourceAttribute> domains) {
+        logger.debug(LoginInfo.getLoginUser() + Constants.EXE_METHOD);
+        if(domains==null){
+            logger.warn(Constants.PARA_NULL);
+            return 0;
+        }
+        int reflectRows = 0;
+        for(PamResourceAttribute p : domains){
+            reflectRows = reflectRows + update(p);
+        }
+        return reflectRows;
+    }
+
+
+    public int delete(int id) {
+        logger.debug(LoginInfo.getLoginUser() + Constants.EXE_METHOD);
+        int[] ids = {id};
+        return delete(ids);
+    }
+
+    public int delete(int[] ids) {
+        logger.debug(LoginInfo.getLoginUser() + Constants.EXE_METHOD);
+        if(ids==null){
+            logger.warn(Constants.PARA_NULL);
+            return 0;
+        }
+        return resourceAttributeDao.delete(toIntegerArray(ids));
+    }
+
+    public int delete(PamResourceAttribute domain) {
+        logger.debug(LoginInfo.getLoginUser() + Constants.EXE_METHOD);
+        if(domain==null){
+            logger.warn(Constants.PARA_NULL);
+            return 0;
+        }
+        return delete(domain.getId());
+    }
+
+
+    public int addNew(PamResourceAttribute domain) {
+        logger.debug(LoginInfo.getLoginUser() + Constants.EXE_METHOD);
+        if(domain==null){
+            logger.warn(Constants.PARA_NULL);
+            return 0;
+        }
+        List<PamResourceAttribute> l = new ArrayList<PamResourceAttribute>();
+        l.add(domain);
+        return addNew(l);
+    }
+
+    public int addNew(Collection<PamResourceAttribute> attributes) {
+        logger.debug(LoginInfo.getLoginUser() + Constants.EXE_METHOD);
+        if(attributes==null){
+            logger.warn(Constants.PARA_NULL);
+            return 0;
+        }
+        return resourceAttributeDao.addNew(attributes);
+    }
+}

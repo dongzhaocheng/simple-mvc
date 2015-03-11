@@ -1,0 +1,128 @@
+package #package.value#
+
+#import#
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+
+@Repository
+public class #daoInterface#{
+
+    private static final Logger logger = LoggerFactory.getLogger(#daoInterface#.class);
+    #autowired#
+    private JdbcTemplate jdbcTemplate;
+    private static final String SELECT = "select";
+    private static final String UPDATE = "update";
+    private static final String DEL = "delete";
+    private static final String INSERT = "insert";
+
+    public List<#domainClass#> getAll() {
+        StringBuilder sql = createSQLHeader(SELECT);
+        #logger.code#;
+        List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql.toString());
+        List<#domainClass#> list = new ArrayList<#domainClass#>();
+        for (Map<String,Object> map : rows){
+            list.add(new #domainClass#(map));
+        }
+        return list;
+    }
+
+    public List<#domainClass#> get(#garbage.tableId.type#[] ids) {
+        StringBuilder sql = addWhereIn(createSQLHeader(SELECT),#id#,ids);
+        #logger.code#;
+        List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql.toString());
+        List<#domainClass#> list = new ArrayList<#domainClass#>();
+        for (Map<String,Object> map : rows){
+            list.add(new #domainClass#(map));
+        }
+        return list;
+    }
+
+    public List<#domainClass#> get(#para.columns#) {
+        StringBuilder sql = addWhere(createSQLHeader(SELECT), #para.columns.used#);
+        #logger.code#;
+        List<Map<String,Object>> rows = jdbcTemplate.queryForList(sql.toString());
+        List<#domainClass#> list = new ArrayList<#domainClass#>();
+        for (Map<String,Object> map : rows){
+            list.add(new #domainClass#(map));
+        }
+        return list;
+    }
+
+    public Integer update(#domainClass# domain) {
+        if(domain==null) {return 0;}
+        StringBuilder sql = createSQLHeader(UPDATE);
+        sql#append.update#;
+        Integer[] arg = {domain.get#id.method#()};
+        sql = addWhereIn(sql,#id#,arg);
+        #logger.code#;
+        return jdbcTemplate.update(sql.toString());
+    }
+
+    public Integer delete(#garbage.tableId.type#[] ids) {
+        if(ids==null) {return 0;}
+        StringBuilder sql = addWhereIn(createSQLHeader(DEL),#id#,ids);
+        #logger.code#;
+        return jdbcTemplate.update(sql.toString());
+    }
+
+    public Integer addNew(Collection<#domainClass#> collection) {
+        if(collection==null){
+            return 0;
+        }
+        StringBuilder sql = createSQLHeader(INSERT);
+        for(#domainClass# r : collection){
+            sql.#append.insert#;
+        }
+        sql.deleteCharAt(sql.length()-1);
+        #logger.code#;
+        return jdbcTemplate.update(sql.toString());
+    }
+
+    private StringBuilder createSQLHeader(String type){
+        StringBuilder sql = new StringBuilder();
+        if(type.equals(SELECT)){
+            sql.append("select * from ").append(#table.name#).append(" ");
+        }
+        if(type.equals(UPDATE)){
+            sql.append("update ").append(#table.name#).append(" set ");
+        }
+        if(type.equals(DEL)){
+            sql.append("delete from ").append(#table.name#).append(" ");
+        }
+        if(type.equals(INSERT)){
+            sql.append("insert into ").append(#table.name#)
+                    .append(" (")#append.columns#.append(") values ");
+        }
+        return sql;
+    }
+
+    private StringBuilder addWhereIn(StringBuilder sql,String col, Object[] values){
+        boolean isStr = values[0] instanceof String;
+        sql.append(" where ").append(col).append(" in (");
+        for(Object v : values){
+            if(isStr) sql.append("'");
+            sql.append(v);
+            if(isStr) sql.append("'");
+            sql.append(",");
+        }
+        sql.deleteCharAt(sql.length()-1).append(")");
+        return sql;
+    }
+
+
+    private StringBuilder addWhere(StringBuilder sql, #para.columns#){
+        String HYPHEN = " and ";
+        sql.append(" where ");
+#addWhere#
+        sql.delete(sql.length() - HYPHEN.length(), sql.length());
+        return sql;
+    }
+
+}

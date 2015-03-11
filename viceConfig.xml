@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <base>
+        <package defaultStructure="true" value="com.autohome.pam.kv"/>
+        <!--日志打印配置-->
+        <logger type="slf4j">
+            <printer>
+                <sql level="DEBUG" value="true"/>
+                <userName level="DEBUG" value="true"/>
+                <role level="DEBUG" value="false"/>
+            </printer>
+        </logger>
+        <spring>
+            <autowired value="true"/>
+        </spring>
+        <garbage>
+            <tableId type="Integer" autoInc="true"/>
+            <recordCreateTime value="NOW()"/>
+        </garbage>
+    </base>
+    <database tablePrefix="KV">
+        <businessLine>
+            <id pk="true"/>
+            <bizName pk="false" type="String"/>
+            <description pk="false" type="String"/>
+        </businessLine>
+        <project>
+            <id pk="true"/>
+            <proName pk="false" type="String"/>
+            <bizId pk="false" type="Integer"/>
+        </project>
+        <type>
+            <id pk="true"/>
+            <kvName pk="false" type="String"/>
+        </type>
+        <engineRoom>
+            <id pk="true" type="Integer"/>
+            <roomName pk="false" type="String"/>
+        </engineRoom>
+        <info>
+            <id pk="true"/>
+            <bizId pk="false" type="Integer"/>
+            <proId pk="false" type="Integer"/>
+            <kvTypeId pk="false" type="Integer"/>
+            <engineRoomId pk="false" type="Integer"/>
+            <infoName pk="false" type="String"/>
+            <iPAddr pk="false" type="String"/>
+            <port pk="false" type="Integer"/>
+            <extraInfo pk="false" type="String"/>
+        </info>
+    </database>
+
+</configuration>
